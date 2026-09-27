@@ -32,6 +32,13 @@ public class Login {
                 && hasSpecialCharacter;
     }
 
+    /**
+     * Validates a South African cellphone number using a regular expression.
+     *
+     * Regular expression syntax reference:
+     * Oracle. Java SE 26 Pattern Class - Regular Expressions.
+     * https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/regex/Pattern.html
+     */
     public boolean checkCellPhoneNumber() {
         return cellPhoneNumber.matches("^\\+27\\d{9}$");
     }
@@ -39,15 +46,15 @@ public class Login {
     public String registerUser() {
 
         if (!checkUserName()) {
-            return "Username is not correctly formatted, please ensure that your username contains an underscore and is no more than five characters in length.";
+            return "Username is not correctly formatted; please ensure that your username contains an underscore and is no more than five characters in length.";
         }
 
         if (!checkPasswordComplexity()) {
-            return "Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number and a special character.";
+            return "Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.";
         }
 
         if (!checkCellPhoneNumber()) {
-            return "Cell phone number incorrectly formatted or does not contain international code.";
+            return "Cell number is incorrectly formatted or does not contain an international code; please correct the number and try again.";
         }
 
         return "User successfully registered.";
