@@ -10,21 +10,27 @@ public class QuickChat {
 
         System.out.println("=== QuickChat Registration ===");
 
+        // Get first name
         System.out.print("Enter your first name: ");
         String firstName = scanner.nextLine();
 
+        // Get last name
         System.out.print("Enter your last name: ");
         String lastName = scanner.nextLine();
 
+        // Get username
         System.out.print("Enter a username: ");
         String username = scanner.nextLine();
 
+        // Get password
         System.out.print("Enter a password: ");
         String password = scanner.nextLine();
 
+        // Get cellphone number
         System.out.print("Enter your cellphone number: ");
         String cellPhoneNumber = scanner.nextLine();
 
+        // Create user
         Login user = new Login(
                 username,
                 password,
@@ -33,20 +39,57 @@ public class QuickChat {
                 lastName
         );
 
+        // Check username
+        if (user.checkUserName()) {
+            System.out.println("Username successfully captured.");
+        } else {
+            System.out.println(
+                    "Username is not correctly formatted; please ensure that "
+                    + "your username contains an underscore and is no more than "
+                    + "five characters in length."
+            );
+        }
+
+        // Check password
+        if (user.checkPasswordComplexity()) {
+            System.out.println("Password successfully captured.");
+        } else {
+            System.out.println(
+                    "Password is not correctly formatted; please ensure that "
+                    + "the password contains at least eight characters, a capital "
+                    + "letter, a number, and a special character."
+            );
+        }
+
+        // Check cellphone number
+        if (user.checkCellPhoneNumber()) {
+            System.out.println("Cell phone number successfully added.");
+        } else {
+            System.out.println(
+                    "Cell phone number incorrectly formatted or does not contain "
+                    + "international code."
+            );
+        }
+
+        // Complete registration
         String registrationResult = user.registerUser();
-        System.out.println(registrationResult);
 
         if (registrationResult.equals("User successfully registered.")) {
+
+            System.out.println("User successfully registered.");
 
             System.out.println();
             System.out.println("=== QuickChat Login ===");
 
+            // Get login username
             System.out.print("Enter your username: ");
             String loginUsername = scanner.nextLine();
 
+            // Get login password
             System.out.print("Enter your password: ");
             String loginPassword = scanner.nextLine();
 
+            // Display login result
             System.out.println(
                     user.returnLoginStatus(loginUsername, loginPassword)
             );
