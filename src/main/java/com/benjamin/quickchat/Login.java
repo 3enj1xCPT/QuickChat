@@ -32,18 +32,10 @@ public class Login {
                 && hasSpecialCharacter;
     }
 
-    /**
-     * Validates a South African cellphone number using a regular expression.
-     * South African numbers use the international country code +27.
-     *
-     * Numbering reference:
-     * Independent Communications Authority of South Africa (ICASA).
-     * National Numbering Plan Regulations.
-     * https://www.icasa.org.za/pages/numbering
-     *
-     * Regular expression reference:
-     * Oracle. Java SE 26 String.matches(String regex).
-     * https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/String.html
+    /*
+     * The regular expression used for cellphone number validation
+     * was developed with reference to Oracle's Java regular
+     * expression documentation (Oracle, 2026).
      */
     public boolean checkCellPhoneNumber() {
         return cellPhoneNumber.matches("^\\+27\\d{9}$");
@@ -80,4 +72,12 @@ public class Login {
             return "Username or password incorrect, please try again.";
         }
     }
+
+    /*
+     * Reference List
+     *
+     * Oracle. 2026. String (Java SE 26 & JDK 26).
+     * Available at:
+     * https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/String.html
+     */
 }
