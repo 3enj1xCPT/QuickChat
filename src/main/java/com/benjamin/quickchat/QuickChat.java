@@ -95,6 +95,34 @@ public class QuickChat {
                 System.out.println();
                 System.out.println("Welcome to QuickChat.");
 
+                // Ask the user how many messages they want to enter
+                int messageLimit = 0;
+
+                while (messageLimit <= 0) {
+
+                    System.out.print(
+                            "How many messages would you like to enter? "
+                    );
+
+                    try {
+                        messageLimit = Integer.parseInt(
+                                scanner.nextLine().trim()
+                        );
+
+                        if (messageLimit <= 0) {
+                            System.out.println(
+                                    "Please enter a number greater than zero."
+                            );
+                        }
+
+                    } catch (NumberFormatException e) {
+                        System.out.println(
+                                "Please enter a valid whole number."
+                        );
+                    }
+                }
+
+                int messagesEntered = 0;
                 boolean running = true;
 
                 // Keep displaying the menu until the user quits
@@ -106,37 +134,245 @@ public class QuickChat {
                     System.out.println("2) Show recently sent messages");
                     System.out.println("3) Quit");
 
+                    System.out.println(
+                            "Messages remaining: "
+                            + (messageLimit - messagesEntered)
+                    );
+
                     System.out.print("Select an option (1-3): ");
                     String choice = scanner.nextLine();
 
                     switch (choice) {
 
-                        case "1":
-                            // Message functionality will be added next
-                            System.out.println(
-                                    "Message sending will be implemented next."
+                        case "1": {
+
+                            // Prevent exceeding the message limit
+                            if (messagesEntered >= messageLimit) {
+
+                                System.out.println(
+                                        "You have reached your message limit of "
+                                        + messageLimit + "."
+                                );
+                                break;
+                            }
+
+                            System.out.println();
+                            System.out.println("=== Compose Message ===");
+
+                            // Collect recipient
+                            System.out.print(
+                                    "Enter recipient cellphone number: "
                             );
+                            String recipient = scanner.nextLine();
+
+                            // Collect message content
+                            System.out.print("Enter your message: ");
+                            String messageText = scanner.nextLine();
+
+                            // Create the message object
+                            Message message = new Message(
+                                    recipient,
+                                    messageText
+                            );
+
+                            // Validate recipient
+                            String recipientResult =
+                                    message.checkRecipientCell();
+
+                            if (!recipientResult.equals(
+                                    "Cell phone number successfully captured."
+                            )) {
+
+                                System.out.println(recipientResult);
+                                break;
+                            }
+
+                            // Validate message length
+                            String lengthResult =
+                                    message.checkMessageLength();
+
+                            if (!lengthResult.equals(
+                                    "Message ready to send."
+                            )) {
+
+                                System.out.println(lengthResult);
+                                break;
+                            }
+
+                            // Validate message ID
+                            if (!message.checkMessageID()) {
+
+                                System.out.println(
+                                        "The generated message ID is invalid."
+                                );
+                                break;
+                            }
+
+                            // Display generated message information
+                            System.out.println();
+                            System.out.println(
+                                    "=== Message Details ==="
+                            );
+
+                            System.out.println(
+                                    "Message ID: "
+                                    + message.getMessageID()
+                            );
+
+                            System.out.println(
+                                    "Message Hash: "
+                                    + message.getMessageHash()
+                            );
+
+                            System.out.println(
+                                    "Recipient: "
+                                    + message.getRecipient()
+                            );
+
+                            System.out.println(
+                                    "Message: "
+                                    + message.getMessageText()
+                            );
+
+                            // Message processing options
+                            System.out.println();
+                            System.out.println(
+                                    "=== Message Options ==="
+                            );
+
+                            System.out.println("1) Send Message");
+                            System.out.println("2) Disregard Message");
+                            System.out.println("3) Store Message");
+
+                            System.out.print(
+                                    "Choose an option (1-3): "
+                            );
+
+                            String actionInput = scanner.nextLine();
+
+                            int action;
+
+                            try {
+                                action = Integer.parseInt(
+                                        actionInput.trim()
+                                );
+
+                            } catch (NumberFormatException e) {
+
+                                System.out.println(
+                                        "Invalid message action."
+                                );
+                                break;
+                            }
+
+                            if (action < 1 || action > 3) {
+
+                                System.out.println(
+                                        "Invalid message action. "
+                                        + "Please select 1, 2 or 3."
+                                );
+                                break;
+                            }
+
+                            // Send, disregard or store the message
+                            String result = message.SentMessage(action);
+
+                            System.out.println(result);
+
+                            // Confirm deletion when disregarding
+                            if (action == 2
+                                    && result.equals(
+                                            "Press 0 to delete the message."
+                                    )) {
+
+                                System.out.print(
+                                        "Enter 0 to confirm deletion: "
+                                );
+
+                                try {
+
+                                    int confirmation =
+                                            Integer.parseInt(
+                                                    scanner.nextLine().trim()
+                                            );
+
+                                    System.out.println(
+                                            message.disregardMessage(
+                                                    confirmation
+                                            )
+                                    );
+
+                                } catch (NumberFormatException e) {
+
+                                    System.out.println(
+                                            "Invalid confirmation. "
+                                            + "Message not deleted."
+                                    );
+                                }
+                            }
+
+                            // Count successfully processed messages
+                            if (message.getStatus().equals("Sent")
+                                    || message.getStatus().equals("Stored")
+                                    || message.getStatus().equals(
+                                            "Disregarded"
+                                    )) {
+
+                                messagesEntered++;
+
+                                System.out.println(
+                                        "Messages processed: "
+                                        + messagesEntered
+                                        + " of "
+                                        + messageLimit
+                                );
+                            }
+
                             break;
+                        }
 
                         case "2":
-                            // Required placeholder from the assignment
+
+                            // Required Part 2 placeholder
                             System.out.println("Coming Soon.");
                             break;
 
                         case "3":
-                            System.out.println("Exiting QuickChat.");
+
+                            // Display the final messaging summary
+                            System.out.println();
+                            System.out.println(
+                                    "=== QuickChat Summary ==="
+                            );
+
+                            System.out.println(
+                                    "Total messages successfully sent: "
+                                    + Message.returnTotalMessagess()
+                            );
+
+                            System.out.println(
+                                    Message.printMessages()
+                            );
+
+                            System.out.println(
+                                    "Thank you for using QuickChat."
+                            );
+
                             running = false;
                             break;
 
                         default:
+
                             System.out.println(
-                                    "Invalid option. Please select 1, 2 or 3."
+                                    "Invalid option. "
+                                    + "Please select 1, 2 or 3."
                             );
                             break;
                     }
                 }
 
             } else {
+
                 System.out.println(
                         "Access denied. Please log in successfully "
                         + "to use QuickChat."
@@ -144,9 +380,12 @@ public class QuickChat {
             }
 
         } else {
+
             System.out.println(registrationResult);
+
             System.out.println(
-                    "Registration unsuccessful. QuickChat cannot continue."
+                    "Registration unsuccessful. "
+                    + "QuickChat cannot continue."
             );
         }
 
