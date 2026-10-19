@@ -3,6 +3,9 @@ package com.benjamin.quickchat;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.io.IOException;
 
 public class MessageTest {
 
@@ -203,4 +206,32 @@ public class MessageTest {
         assertTrue(summary.contains("Unique test message"));
         assertTrue(summary.contains(VALID_RECIPIENT));
     }
+    
+@Test
+public void testStoreMessageToJSON() throws IOException {
+    Message message = new Message(
+            "+27813051715",
+            "Testing JSON storage"
+    );
+
+    assertEquals(
+            "Message successfully stored.",
+            message.SentMessage(3)
+    );
+
+    assertEquals("Stored", message.getStatus());
+
+    Path jsonFile = Path.of("stored_messages.json");
+
+    assertTrue(
+            Files.exists(jsonFile),
+            "The JSON storage file should exist."
+    );
+
+    String jsonContent = Files.readString(jsonFile);
+
+    assertTrue(jsonContent.contains(message.getMessageID()));
+    assertTrue(jsonContent.contains("Testing JSON storage"));
+}
+
 }

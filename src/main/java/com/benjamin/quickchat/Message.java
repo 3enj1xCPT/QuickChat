@@ -52,15 +52,17 @@ public class Message {
         return id.toString();
     }
 
-    // Check that the ID contains exactly 10 digits
+    // Validate that the ID contains exactly 10 digits
     public boolean checkMessageID() {
         return messageID.matches("\\d{10}");
     }
 
-    // Validate a South African international cellphone number
+    // Validate an international phone number
+    // Requires + followed by 8 to 15 digits
     public String checkRecipientCell() {
+
         if (recipient != null
-                && recipient.matches("\\+27[6-8]\\d{8}")) {
+                && recipient.matches("\\+[1-9]\\d{7,14}")) {
 
             return "Cell phone number successfully captured.";
         }
@@ -72,8 +74,11 @@ public class Message {
 
     // Validate the message length
     public String checkMessageLength() {
-if (messageText == null || messageText.trim().isEmpty()) {
-    return "Please enter a message.";
+
+        if (messageText == null
+                || messageText.trim().isEmpty()) {
+
+            return "Please enter a message.";
         }
 
         if (messageText.length() <= MAX_LENGTH) {
@@ -97,9 +102,11 @@ if (messageText == null || messageText.trim().isEmpty()) {
 
         String[] words = messageText.trim().split("\\s+");
 
-String firstWord = words[0].replaceAll("[^a-zA-Z0-9]", "");
-String lastWord = words[words.length - 1]
-        .replaceAll("[^a-zA-Z0-9]", "");
+        String firstWord = words[0]
+                .replaceAll("[^a-zA-Z0-9]", "");
+
+        String lastWord = words[words.length - 1]
+                .replaceAll("[^a-zA-Z0-9]", "");
 
         String firstTwoDigits = messageID.substring(0, 2);
 
@@ -116,6 +123,10 @@ String lastWord = words[words.length - 1]
             return "Invalid option.";
         }
 
+        if (!status.equals("Pending")) {
+            return "Message has already been processed.";
+        }
+
         if (!checkMessageID()) {
             return "Invalid message ID.";
         }
@@ -128,10 +139,6 @@ String lastWord = words[words.length - 1]
         if (!checkMessageLength().equals(
                 "Message ready to send.")) {
             return checkMessageLength();
-        }
-
-        if (!status.equals("Pending")) {
-            return "Message has already been processed.";
         }
 
         switch (option) {
@@ -150,6 +157,7 @@ String lastWord = words[words.length - 1]
                     storeMessage();
                     status = "Stored";
                     return "Message successfully stored.";
+
                 } catch (IOException e) {
                     return "Unable to store message: "
                             + e.getMessage();
@@ -200,7 +208,7 @@ String lastWord = words[words.length - 1]
         return result.toString();
     }
 
-    // Return the number of successfully sent messages
+    // Return the total number of successfully sent messages
     public static int returnTotalMessagess() {
         return totalSent;
     }
@@ -213,6 +221,7 @@ String lastWord = words[words.length - 1]
         for (char character : value.toCharArray()) {
 
             switch (character) {
+
                 case '"':
                     escaped.append("\\\"");
                     break;
@@ -247,27 +256,38 @@ String lastWord = words[words.length - 1]
         return escaped.toString();
     }
 
-    // Convert the message to JSON
+    // Convert a message to JSON
     private String toJson() {
 
         return "{"
-                + "\"messageID\":\"" + escapeJson(messageID) + "\","
-                + "\"messageNumber\":" + messageNumber + ","
-                + "\"recipient\":\"" + escapeJson(recipient) + "\","
-                + "\"message\":\"" + escapeJson(messageText) + "\","
-                + "\"messageHash\":\"" + escapeJson(messageHash) + "\","
+                + "\"messageID\":\""
+                + escapeJson(messageID) + "\","
+
+                + "\"messageNumber\":"
+                + messageNumber + ","
+
+                + "\"recipient\":\""
+                + escapeJson(recipient) + "\","
+
+                + "\"message\":\""
+                + escapeJson(messageText) + "\","
+
+                + "\"messageHash\":\""
+                + escapeJson(messageHash) + "\","
+
                 + "\"status\":\"Stored\""
                 + "}";
     }
 
-    // Save stored messages in a JSON file
+    // Save a message to the JSON file
     public void storeMessage() throws IOException {
 
         String existing = "";
 
         if (Files.exists(JSON_FILE)) {
             existing = Files.readString(
-                    JSON_FILE, StandardCharsets.UTF_8
+                    JSON_FILE,
+                    StandardCharsets.UTF_8
             ).trim();
         }
 
@@ -286,13 +306,17 @@ String lastWord = words[words.length - 1]
             ).trim();
 
             if (content.isEmpty()) {
+
                 updated = "[\n  " + newMessage + "\n]";
+
             } else {
+
                 updated = "[\n  " + content
                         + ",\n  " + newMessage + "\n]";
             }
 
         } else {
+
             throw new IOException(
                     "Existing JSON file has an invalid structure."
             );
@@ -308,6 +332,7 @@ String lastWord = words[words.length - 1]
     }
 
     // Getters for testing and application integration
+
     public String getMessageID() {
         return messageID;
     }
