@@ -1,3 +1,4 @@
+
 package com.benjamin.quickchat;
 
 import java.util.Scanner;
@@ -10,27 +11,23 @@ public class QuickChat {
 
         System.out.println("=== QuickChat Registration ===");
 
-        // Get first name
+        // Collect user details
         System.out.print("Enter your first name: ");
         String firstName = scanner.nextLine();
 
-        // Get last name
         System.out.print("Enter your last name: ");
         String lastName = scanner.nextLine();
 
-        // Get username
         System.out.print("Enter a username: ");
         String username = scanner.nextLine();
 
-        // Get password
         System.out.print("Enter a password: ");
         String password = scanner.nextLine();
 
-        // Get cellphone number
         System.out.print("Enter your cellphone number: ");
         String cellPhoneNumber = scanner.nextLine();
 
-        // Create user
+        // Create the user using the existing Login class
         Login user = new Login(
                 username,
                 password,
@@ -39,7 +36,7 @@ public class QuickChat {
                 lastName
         );
 
-        // Check username
+        // Validate username
         if (user.checkUserName()) {
             System.out.println("Username successfully captured.");
         } else {
@@ -50,7 +47,7 @@ public class QuickChat {
             );
         }
 
-        // Check password
+        // Validate password
         if (user.checkPasswordComplexity()) {
             System.out.println("Password successfully captured.");
         } else {
@@ -61,7 +58,7 @@ public class QuickChat {
             );
         }
 
-        // Check cellphone number
+        // Validate cellphone number
         if (user.checkCellPhoneNumber()) {
             System.out.println("Cell phone number successfully added.");
         } else {
@@ -71,7 +68,7 @@ public class QuickChat {
             );
         }
 
-        // Complete registration
+        // Register the user
         String registrationResult = user.registerUser();
 
         if (registrationResult.equals("User successfully registered.")) {
@@ -81,17 +78,75 @@ public class QuickChat {
             System.out.println();
             System.out.println("=== QuickChat Login ===");
 
-            // Get login username
             System.out.print("Enter your username: ");
             String loginUsername = scanner.nextLine();
 
-            // Get login password
             System.out.print("Enter your password: ");
             String loginPassword = scanner.nextLine();
 
-            // Display login result
+            // Display the login result
             System.out.println(
                     user.returnLoginStatus(loginUsername, loginPassword)
+            );
+
+            // Only authenticated users can access QuickChat
+            if (user.loginUser(loginUsername, loginPassword)) {
+
+                System.out.println();
+                System.out.println("Welcome to QuickChat.");
+
+                boolean running = true;
+
+                // Keep displaying the menu until the user quits
+                while (running) {
+
+                    System.out.println();
+                    System.out.println("=== QuickChat Main Menu ===");
+                    System.out.println("1) Send Messages");
+                    System.out.println("2) Show recently sent messages");
+                    System.out.println("3) Quit");
+
+                    System.out.print("Select an option (1-3): ");
+                    String choice = scanner.nextLine();
+
+                    switch (choice) {
+
+                        case "1":
+                            // Message functionality will be added next
+                            System.out.println(
+                                    "Message sending will be implemented next."
+                            );
+                            break;
+
+                        case "2":
+                            // Required placeholder from the assignment
+                            System.out.println("Coming Soon.");
+                            break;
+
+                        case "3":
+                            System.out.println("Exiting QuickChat.");
+                            running = false;
+                            break;
+
+                        default:
+                            System.out.println(
+                                    "Invalid option. Please select 1, 2 or 3."
+                            );
+                            break;
+                    }
+                }
+
+            } else {
+                System.out.println(
+                        "Access denied. Please log in successfully "
+                        + "to use QuickChat."
+                );
+            }
+
+        } else {
+            System.out.println(registrationResult);
+            System.out.println(
+                    "Registration unsuccessful. QuickChat cannot continue."
             );
         }
 
