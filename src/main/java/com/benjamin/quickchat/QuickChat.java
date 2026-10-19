@@ -139,8 +139,14 @@ public class QuickChat {
                             + (messageLimit - messagesEntered)
                     );
 
-                    System.out.print("Select an option (1-3): ");
-                    String choice = scanner.nextLine();
+System.out.print("Select an option (1-3): ");
+
+if (!scanner.hasNextLine()) {
+    System.out.println("\nInput closed. Exiting QuickChat.");
+    break;
+}
+
+String choice = scanner.nextLine();
 
                     switch (choice) {
 

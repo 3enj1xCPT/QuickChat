@@ -72,8 +72,8 @@ public class Message {
 
     // Validate the message length
     public String checkMessageLength() {
-        if (messageText == null || messageText.isEmpty()) {
-            return "Please enter a message.";
+if (messageText == null || messageText.trim().isEmpty()) {
+    return "Please enter a message.";
         }
 
         if (messageText.length() <= MAX_LENGTH) {
@@ -97,8 +97,9 @@ public class Message {
 
         String[] words = messageText.trim().split("\\s+");
 
-        String firstWord = words[0];
-        String lastWord = words[words.length - 1];
+String firstWord = words[0].replaceAll("[^a-zA-Z0-9]", "");
+String lastWord = words[words.length - 1]
+        .replaceAll("[^a-zA-Z0-9]", "");
 
         String firstTwoDigits = messageID.substring(0, 2);
 
