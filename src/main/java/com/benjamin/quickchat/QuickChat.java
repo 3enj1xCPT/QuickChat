@@ -162,6 +162,10 @@ String choice = scanner.nextLine();
                                 break;
                             }
 
+                            // Use the requested message limit to control entry.
+                            // Each successful send, store or disregard fills one slot.
+                            for (int slot = messagesEntered; slot < messageLimit; slot++) {
+
                             System.out.println();
                             System.out.println("=== Compose Message ===");
 
@@ -334,6 +338,7 @@ String choice = scanner.nextLine();
                                 );
                             }
 
+                            } // End message-entry for loop
                             break;
                         }
 
