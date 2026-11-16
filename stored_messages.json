@@ -1,0 +1,15 @@
+[
+  {"messageID":"3699318996","messageNumber":0,"recipient":"+27813051715","message":"Hi Mike,Hows things?","messageHash":"36:0:HITHINGS?","status":"Stored"},
+  {"messageID":"6817554263","messageNumber":0,"recipient":"+27810852694","message":"Hi Mike, can you join us for dinner tonight?","messageHash":"68:0:HITONIGHT","status":"Stored"},
+  {"messageID":"8778102438","messageNumber":1,"recipient":"+27813011715","message":"Hi Mike, can you join us for dinner tonight again?","messageHash":"87:1:HIAGAIN","status":"Stored"},
+  {"messageID":"7390175506","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"73:12:TESTINGSTORAGE","status":"Stored"},
+  {"messageID":"6377774074","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"63:12:TESTINGSTORAGE","status":"Stored"},
+  {"messageID":"3597513050","messageNumber":2,"recipient":"+27215869854","message":"HI Mike want yo join us for dinner?","messageHash":"35:2:HIDINNER","status":"Stored"},
+  {"messageID":"1709633557","messageNumber":3,"recipient":"+27215688745","message":"HI Mike want yo join us for dinner again?","messageHash":"17:3:HIAGAIN","status":"Stored"},
+  {"messageID":"3633610250","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"36:12:TESTINGSTORAGE","status":"Stored"},
+  {"messageID":"7580946182","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"75:12:TESTINGSTORAGE","status":"Stored"},
+  {"messageID":"5537134631","messageNumber":1,"recipient":"+27718693002","message":"Hi Mike, can you join us for dinner tonight?","messageHash":"55:1:HITONIGHT","status":"Stored"},
+  {"messageID":"9330219640","messageNumber":2,"recipient":"+27813051715","message":"Hi Keegan, did you receive the payment?","messageHash":"93:2:HIPAYMENT","status":"Stored"},
+  {"messageID":"5559213315","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"55:12:TESTINGSTORAGE","status":"Stored"},
+  {"messageID":"6698255066","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"66:12:TESTINGSTORAGE","status":"Stored"}
+]
