@@ -11,5 +11,7 @@
   {"messageID":"5537134631","messageNumber":1,"recipient":"+27718693002","message":"Hi Mike, can you join us for dinner tonight?","messageHash":"55:1:HITONIGHT","status":"Stored"},
   {"messageID":"9330219640","messageNumber":2,"recipient":"+27813051715","message":"Hi Keegan, did you receive the payment?","messageHash":"93:2:HIPAYMENT","status":"Stored"},
   {"messageID":"5559213315","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"55:12:TESTINGSTORAGE","status":"Stored"},
-  {"messageID":"6698255066","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"66:12:TESTINGSTORAGE","status":"Stored"}
+  {"messageID":"6698255066","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"66:12:TESTINGSTORAGE","status":"Stored"},
+  {"messageID":"2229738847","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"22:12:TESTINGSTORAGE","status":"Stored"},
+  {"messageID":"4467303928","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"44:12:TESTINGSTORAGE","status":"Stored"}
 ]

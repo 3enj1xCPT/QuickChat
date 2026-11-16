@@ -9,14 +9,24 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Message {
 
     private static final int MAX_LENGTH = 250;
     private static final SecureRandom RANDOM = new SecureRandom();
 
+    // Part 3 message collections
     private static final List<Message> sentMessages = new ArrayList<>();
+    private static final List<Message> disregardedMessages = new ArrayList<>();
+    private static final List<Message> storedMessages = new ArrayList<>();
+
+    private static final List<String> messageHashes = new ArrayList<>();
+    private static final List<String> messageIDs = new ArrayList<>();
+
     private static int totalSent = 0;
     private static int nextMessageNumber = 0;
 
@@ -41,24 +51,43 @@ public class Message {
         this.status = "Pending";
     }
 
-    // Generate a random 10-digit message ID
-    private static String generateMessageID() {
-        StringBuilder id = new StringBuilder();
+    // Reconstruct a message that was saved in JSON
+    private Message(String id, int number, String recipient,
+                    String text, String hash, String status) {
 
-        for (int i = 0; i < 10; i++) {
-            id.append(RANDOM.nextInt(10));
-        }
+        this.messageID = id;
+        this.messageNumber = number;
+        this.recipient = recipient;
+        this.messageText = text;
+        this.messageHash = hash;
+        this.status = status;
 
-        return id.toString();
+        nextMessageNumber = Math.max(nextMessageNumber, number + 1);
     }
 
-    // Validate that the ID contains exactly 10 digits
+    // Generate a 10-digit message ID
+    private static String generateMessageID() {
+        String id;
+
+        do {
+            StringBuilder builder = new StringBuilder();
+
+            for (int i = 0; i < 10; i++) {
+                builder.append(RANDOM.nextInt(10));
+            }
+
+            id = builder.toString();
+
+        } while (messageIDs.contains(id));
+
+        return id;
+    }
+
     public boolean checkMessageID() {
         return messageID.matches("\\d{10}");
     }
 
-    // Validate an international phone number
-    // Requires + followed by 8 to 15 digits
+    // Validate an international cellphone number
     public String checkRecipientCell() {
 
         if (recipient != null
@@ -72,7 +101,7 @@ public class Message {
                 + "Please correct the number and try again.";
     }
 
-    // Validate the message length
+    // Validate message length
     public String checkMessageLength() {
 
         if (messageText == null
@@ -92,7 +121,7 @@ public class Message {
                 + "; please reduce the size.";
     }
 
-    // Generate the message hash
+    // Create the required message hash
     public String createMessageHash() {
 
         if (messageText == null
@@ -115,7 +144,18 @@ public class Message {
                 + firstWord + lastWord).toUpperCase();
     }
 
-    // Process a message action
+    // Record the ID and hash of a processed message
+    private void recordMessageDetails() {
+
+        if (!messageIDs.contains(messageID)) {
+            messageIDs.add(messageID);
+        }
+
+        if (!messageHashes.contains(messageHash)) {
+            messageHashes.add(messageHash);
+        }
+    }
+
     // 1 = Send, 2 = Disregard, 3 = Store
     public String SentMessage(int option) {
 
@@ -147,6 +187,8 @@ public class Message {
                 status = "Sent";
                 sentMessages.add(this);
                 totalSent++;
+                recordMessageDetails();
+
                 return "Message successfully sent.";
 
             case 2:
@@ -156,6 +198,13 @@ public class Message {
                 try {
                     storeMessage();
                     status = "Stored";
+
+                    if (!storedMessages.contains(this)) {
+                        storedMessages.add(this);
+                    }
+
+                    recordMessageDetails();
+
                     return "Message successfully stored.";
 
                 } catch (IOException e) {
@@ -176,14 +225,18 @@ public class Message {
         }
 
         if (confirmation == 0) {
+
             status = "Disregarded";
+            disregardedMessages.add(this);
+            recordMessageDetails();
+
             return "Message disregarded.";
         }
 
         return "Message was not disregarded.";
     }
 
-    // Display all sent messages
+    // Display recently sent messages
     public static String printMessages() {
 
         if (sentMessages.isEmpty()) {
@@ -193,28 +246,240 @@ public class Message {
         StringBuilder result = new StringBuilder();
 
         for (Message current : sentMessages) {
+            result.append(formatMessage(current));
+        }
 
-            result.append("\nMessage ID: ")
-                    .append(current.messageID)
-                    .append("\nMessage Hash: ")
-                    .append(current.messageHash)
+        return result.toString();
+    }
+
+    public static int returnTotalMessagess() {
+        return totalSent;
+    }
+
+    // Part 3: Access message collections safely
+    public static List<Message> getSentMessages() {
+        return Collections.unmodifiableList(
+                new ArrayList<>(sentMessages));
+    }
+
+    public static List<Message> getDisregardedMessages() {
+        return Collections.unmodifiableList(
+                new ArrayList<>(disregardedMessages));
+    }
+
+    public static List<Message> getStoredMessages() {
+        return Collections.unmodifiableList(
+                new ArrayList<>(storedMessages));
+    }
+
+    public static List<String> getMessageHashes() {
+        return Collections.unmodifiableList(
+                new ArrayList<>(messageHashes));
+    }
+
+    public static List<String> getMessageIDs() {
+        return Collections.unmodifiableList(
+                new ArrayList<>(messageIDs));
+    }
+
+    // Display sender and recipient of sent messages
+    public static String displaySendersAndRecipients(String sender) {
+
+        if (sentMessages.isEmpty()) {
+            return "No sent messages available.";
+        }
+
+        StringBuilder result = new StringBuilder();
+
+        for (Message message : sentMessages) {
+
+            result.append("Sender: ")
+                    .append(sender)
                     .append("\nRecipient: ")
-                    .append(current.recipient)
-                    .append("\nMessage: ")
-                    .append(current.messageText)
+                    .append(message.recipient)
                     .append("\n-------------------------\n");
         }
 
         return result.toString();
     }
 
-    // Return the total number of successfully sent messages
-    public static int returnTotalMessagess() {
-        return totalSent;
+    // Find the longest sent message
+    public static Message findLongestSentMessage() {
+
+        Message longest = null;
+
+        for (Message message : sentMessages) {
+
+            if (longest == null
+                    || message.messageText.length()
+                    > longest.messageText.length()) {
+
+                longest = message;
+            }
+        }
+
+        return longest;
     }
 
-    // Escape special characters for valid JSON
+    // Find the longest stored message
+    public static Message findLongestStoredMessage() {
+
+        Message longest = null;
+
+        for (Message message : storedMessages) {
+
+            if (longest == null
+                    || message.messageText.length()
+                    > longest.messageText.length()) {
+
+                longest = message;
+            }
+        }
+
+        return longest;
+    }
+
+    // Search all active messages by message ID
+    public static Message searchByMessageID(String id) {
+
+        for (Message message : getActiveMessages()) {
+
+            if (message.messageID.equals(id)) {
+                return message;
+            }
+        }
+
+        return null;
+    }
+
+    // Search sent and stored messages by recipient
+    public static List<Message> searchByRecipient(String recipient) {
+
+        List<Message> matches = new ArrayList<>();
+
+        for (Message message : getActiveMessages()) {
+
+            if (message.recipient.equals(recipient)) {
+                matches.add(message);
+            }
+        }
+
+        return matches;
+    }
+
+    // Delete a message using its hash
+    public static boolean deleteMessageByHash(String hash)
+            throws IOException {
+
+        if (hash == null) {
+            return false;
+        }
+
+        for (Message message : new ArrayList<>(storedMessages)) {
+
+            if (message.messageHash.equalsIgnoreCase(hash)) {
+
+                List<Message> remaining =
+                        new ArrayList<>(storedMessages);
+
+                remaining.remove(message);
+
+                // Write the updated JSON before changing memory
+                saveStoredMessages(remaining);
+
+                storedMessages.remove(message);
+                messageHashes.remove(message.messageHash);
+                messageIDs.remove(message.messageID);
+
+                message.status = "Deleted";
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Generate a complete report
+    public static String displayFullReport() {
+
+        StringBuilder report = new StringBuilder();
+
+        report.append("\n=== QUICKCHAT MESSAGE REPORT ===\n");
+
+        report.append("\nTotal sent messages: ")
+                .append(sentMessages.size());
+
+        report.append("\nTotal stored messages: ")
+                .append(storedMessages.size());
+
+        report.append("\nTotal disregarded messages: ")
+                .append(disregardedMessages.size());
+
+        report.append("\n\n=== SENT MESSAGES ===\n");
+
+        if (sentMessages.isEmpty()) {
+            report.append("No sent messages.\n");
+        }
+
+        for (Message message : sentMessages) {
+            report.append(formatMessage(message));
+        }
+
+        report.append("\n=== STORED MESSAGES ===\n");
+
+        if (storedMessages.isEmpty()) {
+            report.append("No stored messages.\n");
+        }
+
+        for (Message message : storedMessages) {
+            report.append(formatMessage(message));
+        }
+
+        report.append("\n=== DISREGARDED MESSAGES ===\n");
+
+        if (disregardedMessages.isEmpty()) {
+            report.append("No disregarded messages.\n");
+        }
+
+        for (Message message : disregardedMessages) {
+            report.append(formatMessage(message));
+        }
+
+        return report.toString();
+    }
+
+    // Format one message for reports and searches
+    public static String formatMessage(Message message) {
+
+        if (message == null) {
+            return "Message not found.";
+        }
+
+        return "\nMessage ID: " + message.messageID
+                + "\nMessage Hash: " + message.messageHash
+                + "\nRecipient: " + message.recipient
+                + "\nMessage: " + message.messageText
+                + "\nStatus: " + message.status
+                + "\n-------------------------\n";
+    }
+
+    // Combine sent and stored messages for searching
+    private static List<Message> getActiveMessages() {
+
+        List<Message> messages = new ArrayList<>();
+        messages.addAll(sentMessages);
+        messages.addAll(storedMessages);
+
+        return messages;
+    }
+
+    // Escape characters so that JSON remains valid
     private static String escapeJson(String value) {
+
+        if (value == null) {
+            return "";
+        }
 
         StringBuilder escaped = new StringBuilder();
 
@@ -244,9 +509,8 @@ public class Message {
 
                 default:
                     if (character < 0x20) {
-                        escaped.append(
-                                String.format("\\u%04x", (int) character)
-                        );
+                        escaped.append(String.format(
+                                "\\u%04x", (int) character));
                     } else {
                         escaped.append(character);
                     }
@@ -256,7 +520,7 @@ public class Message {
         return escaped.toString();
     }
 
-    // Convert a message to JSON
+    // Convert one message to JSON
     private String toJson() {
 
         return "{"
@@ -279,59 +543,393 @@ public class Message {
                 + "}";
     }
 
-    // Save a message to the JSON file
+    // Save one message without overwriting previous messages
     public void storeMessage() throws IOException {
 
-        String existing = "";
+        List<Message> existing = readMessagesFromJson();
 
-        if (Files.exists(JSON_FILE)) {
-            existing = Files.readString(
-                    JSON_FILE,
-                    StandardCharsets.UTF_8
-            ).trim();
+        for (Message message : existing) {
+            if (message.messageID.equals(this.messageID)) {
+                return;
+            }
         }
 
-        String newMessage = toJson();
-        String updated;
+        existing.add(this);
+        saveStoredMessages(existing);
+    }
 
-        if (existing.isEmpty() || existing.equals("[]")) {
+    // Rewrite JSON after storing or deleting messages
+    private static void saveStoredMessages(List<Message> messages)
+            throws IOException {
 
-            updated = "[\n  " + newMessage + "\n]";
+        StringBuilder json = new StringBuilder("[\n");
 
-        } else if (existing.startsWith("[")
-                && existing.endsWith("]")) {
+        for (int i = 0; i < messages.size(); i++) {
 
-            String content = existing.substring(
-                    1, existing.length() - 1
-            ).trim();
+            json.append("  ")
+                    .append(messages.get(i).toJson());
 
-            if (content.isEmpty()) {
-
-                updated = "[\n  " + newMessage + "\n]";
-
-            } else {
-
-                updated = "[\n  " + content
-                        + ",\n  " + newMessage + "\n]";
+            if (i < messages.size() - 1) {
+                json.append(",");
             }
 
-        } else {
-
-            throw new IOException(
-                    "Existing JSON file has an invalid structure."
-            );
+            json.append("\n");
         }
+
+        json.append("]");
 
         Files.writeString(
                 JSON_FILE,
-                updated,
+                json.toString(),
                 StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING
         );
     }
 
-    // Getters for testing and application integration
+    // Read messages from JSON and recreate Message objects
+    private static List<Message> readMessagesFromJson()
+            throws IOException {
+
+        List<Message> messages = new ArrayList<>();
+
+        if (!Files.exists(JSON_FILE)) {
+            return messages;
+        }
+
+        String json = Files.readString(
+                JSON_FILE,
+                StandardCharsets.UTF_8
+        ).trim();
+
+        if (json.isEmpty() || json.equals("[]")) {
+            return messages;
+        }
+
+        // Parse JSON objects without adding a Maven dependency
+        JsonReader reader = new JsonReader(json);
+        List<Map<String, String>> records = reader.readArray();
+
+        for (Map<String, String> record : records) {
+
+            try {
+                String id = required(record, "messageID");
+                int number = Integer.parseInt(
+                        required(record, "messageNumber"));
+
+                String recipient = required(record, "recipient");
+                String text = required(record, "message");
+                String hash = required(record, "messageHash");
+
+                Message message = new Message(
+                        id,
+                        number,
+                        recipient,
+                        text,
+                        hash,
+                        "Stored"
+                );
+
+                messages.add(message);
+
+            } catch (NumberFormatException e) {
+                throw new IOException(
+                        "Invalid message number in JSON.", e);
+            }
+        }
+
+        return messages;
+    }
+
+    private static String required(
+            Map<String, String> record, String key)
+            throws IOException {
+
+        String value = record.get(key);
+
+        if (value == null) {
+            throw new IOException(
+                    "Missing JSON field: " + key);
+        }
+
+        return value;
+    }
+
+    // Load stored messages when the application starts
+    public static void loadStoredMessages() throws IOException {
+
+        List<Message> loaded = readMessagesFromJson();
+
+        storedMessages.clear();
+
+        for (Message message : loaded) {
+            storedMessages.add(message);
+        }
+
+        rebuildMessageDetails();
+    }
+
+    // Rebuild ID and hash collections from processed messages
+    private static void rebuildMessageDetails() {
+
+        messageIDs.clear();
+        messageHashes.clear();
+
+        List<Message> all = new ArrayList<>();
+
+        all.addAll(sentMessages);
+        all.addAll(storedMessages);
+        all.addAll(disregardedMessages);
+
+        for (Message message : all) {
+
+            if (!messageIDs.contains(message.messageID)) {
+                messageIDs.add(message.messageID);
+            }
+
+            if (!messageHashes.contains(message.messageHash)) {
+                messageHashes.add(message.messageHash);
+            }
+        }
+    }
+
+    // Small JSON reader for the structure saved by QuickChat
+    private static class JsonReader {
+
+        private final String text;
+        private int position = 0;
+
+        JsonReader(String text) {
+            this.text = text;
+        }
+
+        List<Map<String, String>> readArray() throws IOException {
+
+            List<Map<String, String>> result = new ArrayList<>();
+
+            expect('[');
+            skipSpaces();
+
+            if (consume(']')) {
+                ensureFinished();
+                return result;
+            }
+
+            while (true) {
+
+                result.add(readObject());
+
+                if (consume(']')) {
+                    break;
+                }
+
+                expect(',');
+            }
+
+            ensureFinished();
+            return result;
+        }
+
+        private Map<String, String> readObject()
+                throws IOException {
+
+            Map<String, String> object = new HashMap<>();
+
+            expect('{');
+
+            if (consume('}')) {
+                return object;
+            }
+
+            while (true) {
+
+                String key = readString();
+                expect(':');
+
+                String value;
+
+                skipSpaces();
+
+                if (position < text.length()
+                        && text.charAt(position) == '"') {
+
+                    value = readString();
+
+                } else {
+
+                    int start = position;
+
+                    while (position < text.length()) {
+
+                        char c = text.charAt(position);
+
+                        if (c == ',' || c == '}'
+                                || Character.isWhitespace(c)) {
+                            break;
+                        }
+
+                        position++;
+                    }
+
+                    value = text.substring(start, position);
+
+                    if (value.isEmpty()) {
+                        throw new IOException("Invalid JSON value.");
+                    }
+                }
+
+                object.put(key, value);
+
+                if (consume('}')) {
+                    return object;
+                }
+
+                expect(',');
+            }
+        }
+
+        private String readString() throws IOException {
+
+            skipSpaces();
+            expect('"');
+
+            StringBuilder result = new StringBuilder();
+
+            while (position < text.length()) {
+
+                char c = text.charAt(position++);
+
+                if (c == '"') {
+                    return result.toString();
+                }
+
+                if (c == '\\') {
+
+                    if (position >= text.length()) {
+                        throw new IOException("Invalid JSON escape.");
+                    }
+
+                    char escaped = text.charAt(position++);
+
+                    switch (escaped) {
+
+                        case '"':
+                            result.append('"');
+                            break;
+
+                        case '\\':
+                            result.append('\\');
+                            break;
+
+                        case '/':
+                            result.append('/');
+                            break;
+
+                        case 'n':
+                            result.append('\n');
+                            break;
+
+                        case 'r':
+                            result.append('\r');
+                            break;
+
+                        case 't':
+                            result.append('\t');
+                            break;
+
+                        case 'b':
+                            result.append('\b');
+                            break;
+
+                        case 'f':
+                            result.append('\f');
+                            break;
+
+                        case 'u':
+
+                            if (position + 4 > text.length()) {
+                                throw new IOException(
+                                        "Invalid Unicode escape.");
+                            }
+
+                            String hex = text.substring(
+                                    position, position + 4);
+
+                            try {
+                                result.append((char)
+                                        Integer.parseInt(hex, 16));
+                            } catch (NumberFormatException e) {
+                                throw new IOException(
+                                        "Invalid Unicode escape.", e);
+                            }
+
+                            position += 4;
+                            break;
+
+                        default:
+                            throw new IOException(
+                                    "Invalid JSON escape.");
+                    }
+
+                } else {
+
+                    if (c < 0x20) {
+                        throw new IOException(
+                                "Invalid control character in JSON.");
+                    }
+
+                    result.append(c);
+                }
+            }
+
+            throw new IOException("Unclosed JSON string.");
+        }
+
+        private void skipSpaces() {
+
+            while (position < text.length()
+                    && Character.isWhitespace(
+                            text.charAt(position))) {
+
+                position++;
+            }
+        }
+
+        private boolean consume(char expected) {
+
+            skipSpaces();
+
+            if (position < text.length()
+                    && text.charAt(position) == expected) {
+
+                position++;
+                return true;
+            }
+
+            return false;
+        }
+
+        private void expect(char expected) throws IOException {
+
+            if (!consume(expected)) {
+                throw new IOException(
+                        "Invalid JSON at position " + position
+                        + ". Expected " + expected);
+            }
+        }
+
+        private void ensureFinished() throws IOException {
+
+            skipSpaces();
+
+            if (position != text.length()) {
+                throw new IOException(
+                        "Unexpected data after JSON array.");
+            }
+        }
+    }
+
+    // Existing getters
 
     public String getMessageID() {
         return messageID;
