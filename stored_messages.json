@@ -13,5 +13,7 @@
   {"messageID":"5559213315","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"55:12:TESTINGSTORAGE","status":"Stored"},
   {"messageID":"6698255066","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"66:12:TESTINGSTORAGE","status":"Stored"},
   {"messageID":"2229738847","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"22:12:TESTINGSTORAGE","status":"Stored"},
-  {"messageID":"4467303928","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"44:12:TESTINGSTORAGE","status":"Stored"}
+  {"messageID":"4467303928","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"44:12:TESTINGSTORAGE","status":"Stored"},
+  {"messageID":"1598789397","messageNumber":12,"recipient":"+27813051715","message":"Testing JSON storage","messageHash":"15:12:TESTINGSTORAGE","status":"Stored"},
+  {"messageID":"9914798613","messageNumber":14,"recipient":"+27838884567","message":"Where are you? You are late! I have asked you to be on time.","messageHash":"99:14:WHERETIME","status":"Stored"}
 ]
