@@ -1,122 +1,85 @@
+# QuickChat – PROG5121 Programming 1A
 
-# QuickChat - PROG5121 Portfolio of Evidence
+## Final Portfolio of Evidence | 2026
 
-## Project Overview
+QuickChat is a Java console-based messaging application developed as part of the PROG5121 Programming 1A Portfolio of Evidence.
 
-QuickChat is a Java console-based messaging application developed for the IIE Programming 1A (PROG5121) Portfolio of Evidence.
+The application allows users to register, log in, send messages, store messages and manage their message history.
 
-The project was developed in three parts, covering user registration, login, message processing, JSON storage, message management and automated testing.
+## Project Features
+
+### Part 1 – Registration and Login
+- User registration and login
+- Username validation
+- Password complexity validation
+- International cellphone number validation
+
+### Part 2 – Messaging
+- Send, store and disregard messages
+- Generate 10-digit message IDs
+- Generate message hashes
+- Validate recipients and message length
+- Save stored messages to a JSON file
+
+### Part 3 – Message Management
+- View stored messages
+- Display sender and recipient information
+- Find the longest stored message
+- Search messages by ID
+- Search messages by recipient
+- Delete stored messages using their hashes
+- Generate detailed message reports
+- Load stored messages from JSON
 
 ## Technologies Used
 
 - Java 21
-- Apache NetBeans IDE
-- Apache Maven
+- Apache NetBeans
+- Maven
 - JUnit 5
+- JSON file storage
 - Git and GitHub
 - GitHub Actions
-- JSON file storage
 
-## Part 1 - Registration and Login
+## Testing
 
-The application allows users to register using their first name, last name, username, password and cellphone number.
+The application includes 43 automated JUnit tests covering registration, login, messaging and message management.
 
-The system validates:
-- Username format and length
-- Password complexity
-- International cellphone number format
-- Login credentials
+**Latest verified local result:**
+- Tests run: 43
+- Failures: 0
+- Errors: 0
+- Skipped: 0
+- Build status: SUCCESS
 
-Users must log in successfully before accessing QuickChat.
-
-## Part 2 - Messaging
-
-After logging in, users can specify how many messages they want to process.
-
-The application supports:
-- Creating messages
-- Generating unique 10-digit message IDs
-- Generating message hashes
-- Validating recipient cellphone numbers
-- Limiting messages to 250 characters
-- Sending messages
-- Disregarding messages
-- Storing messages in a JSON file
-- Displaying sent messages
-
-## Part 3 - Message Management
-
-Part 3 extends QuickChat with runtime message collections and a Stored Messages menu.
-
-The application supports:
-- Loading previously stored messages from JSON
-- Displaying sender and recipient information
-- Identifying the longest stored message
-- Searching for messages using their message IDs
-- Searching for messages by recipient cellphone number
-- Deleting stored messages using their message hashes
-- Generating a complete message report
-- Displaying stored messages
-
-Stored messages are saved in `stored_messages.json` and can be loaded again when the application restarts.
+GitHub Actions is configured to automatically build and test the project.
 
 ## Running the Application
 
-1. Install Java JDK 21.
-2. Open the project in Apache NetBeans.
-3. Allow Maven to download the required dependencies.
-4. Open `QuickChat.java` in the `com.benjamin.quickchat` package.
-5. Run the application.
-6. Register and log in using valid credentials.
-7. Follow the console menu to use the messaging features.
+1. Clone or download the GitHub repository.
+2. Open the Maven project in Apache NetBeans.
+3. Ensure Java 21 is installed and configured.
+4. Run the `QuickChat.java` main class.
+5. Follow the console instructions to register, log in and use QuickChat.
 
-The application uses a console interface and does not require a graphical user interface.
+To run the automated tests, execute:
 
-## Running Automated Tests
+`mvn clean test`
 
-The project uses JUnit 5 for automated testing.
+## Project Links
 
-The test classes are:
-- `LoginTest.java`
-- `MessageTest.java`
-- `Part3MessageTest.java`
+**GitHub Repository:**
 
-To run the tests in NetBeans, right-click the QuickChat project and select Clean and Build.
+https://github.com/3enj1xCPT/QuickChat
 
-Alternatively, run:
+**Final PoE Video Demonstration:**
 
-```bash
-mvn clean test
-```
+https://youtu.be/KxgGco_1d1Q
 
-At the time of final local verification, all 39 automated tests passed with zero failures and zero errors.
+## Assessment Information
 
-## GitHub Actions
+**Module:** PROG5121 – Programming 1A
 
-The repository contains a Maven CI workflow at:
+**Assessment:** Final Portfolio of Evidence
 
-`.github/workflows/maven.yml`
-
-GitHub Actions automatically builds and tests the project when changes are pushed to the configured branches.
-
-The Part 3 workflow uses Java 21 and Maven.
-
-## Project Structure
-
-- `src/main/java/com/benjamin/quickchat/Login.java` - Registration and login functionality
-- `src/main/java/com/benjamin/quickchat/Message.java` - Message processing, storage and management
-- `src/main/java/com/benjamin/quickchat/QuickChat.java` - Main application and console menus
-- `src/test/java/com/benjamin/quickchat/` - Automated JUnit tests
-- `stored_messages.json` - Persisted message records
-- `pom.xml` - Maven configuration
-- `.github/workflows/maven.yml` - Automated build and testing workflow
-
-## Development Branches
-
-- `master` - Initial project development
-- `part-2-messaging` - Messaging functionality
-- `part-3-final-poe` - Final Portfolio of Evidence implementation
-
-## Notes
-
-QuickChat was developed as an academic programming project. It demonstrates Java programming, object-oriented design, validation, collections, file handling, testing and version control.
+**Year:** 2026
