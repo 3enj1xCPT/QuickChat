@@ -382,4 +382,106 @@ public class Part3MessageTest {
                 message.getStatus()
         );
     }
+
+    // TEST 14: Verify multiple messages survive JSON reload
+    @Test
+    public void testMultipleMessagesPersistAfterReload()
+            throws IOException {
+
+        Message first = new Message(
+                "+27838884567",
+                "Where are you? You are late! "
+                + "I have asked you to be on time."
+        );
+
+        Message second = new Message(
+                "+27838884567",
+                "Ok, I am leaving without you."
+        );
+
+        assertEquals(
+                "Message successfully stored.",
+                first.SentMessage(3)
+        );
+
+        assertEquals(
+                "Message successfully stored.",
+                second.SentMessage(3)
+        );
+
+        String firstID = first.getMessageID();
+        String firstHash = first.getMessageHash();
+
+        String secondID = second.getMessageID();
+        String secondHash = second.getMessageHash();
+
+        // Reload stored messages from the JSON file
+        Message.loadStoredMessages();
+
+        List<Message> stored =
+                Message.getStoredMessages();
+
+        assertEquals(2, stored.size());
+
+        Message loadedFirst =
+                Message.searchByMessageID(firstID);
+
+        Message loadedSecond =
+                Message.searchByMessageID(secondID);
+
+        assertNotNull(loadedFirst);
+        assertNotNull(loadedSecond);
+
+        // Verify original message hashes
+        assertEquals(
+                firstHash,
+                loadedFirst.getMessageHash()
+        );
+
+        assertEquals(
+                secondHash,
+                loadedSecond.getMessageHash()
+        );
+
+        // Verify original recipients
+        assertEquals(
+                first.getRecipient(),
+                loadedFirst.getRecipient()
+        );
+
+        assertEquals(
+                second.getRecipient(),
+                loadedSecond.getRecipient()
+        );
+
+        // Verify original message text
+        assertEquals(
+                first.getMessageText(),
+                loadedFirst.getMessageText()
+        );
+
+        assertEquals(
+                second.getMessageText(),
+                loadedSecond.getMessageText()
+        );
+
+        // Verify both messages have stored status
+        assertEquals(
+                "Stored",
+                loadedFirst.getStatus()
+        );
+
+        assertEquals(
+                "Stored",
+                loadedSecond.getStatus()
+        );
+
+        // Verify recipient search finds both messages
+        List<Message> matches =
+                Message.searchByRecipient(
+                        "+27838884567"
+                );
+
+        assertEquals(2, matches.size());
+    }
 }
